@@ -5,6 +5,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
+import { CatalogModule } from './catalog/catalog.module';
 import { HttpExceptionFilter } from './common';
 import { validate } from './config/env.validation';
 
@@ -24,6 +25,7 @@ import { validate } from './config/env.validation';
     DatabaseModule,
     AuthModule,
     HealthModule,
+    CatalogModule,
   ],
   providers: [
     {
