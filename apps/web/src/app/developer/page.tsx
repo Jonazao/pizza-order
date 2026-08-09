@@ -41,7 +41,7 @@ export default function DeveloperPage() {
               Developer Portal
             </Link>
           </nav>
-          
+
           <HeaderAuth />
         </div>
       </header>
@@ -160,33 +160,6 @@ export default function DeveloperPage() {
                 <span className="font-bold text-slate-900">JWT + HttpOnly / Bearer</span>
               </li>
             </ul>
-          </div>
-
-          <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">
-                📡
-              </span>
-              <h4 className="font-bold text-slate-900 text-base">Core REST Endpoints</h4>
-            </div>
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
-                <span className="font-mono text-slate-700 font-medium">/health</span>
-                <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-emerald-100 text-emerald-800">GET</span>
-              </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
-                <span className="font-mono text-slate-700 font-medium">/auth/login</span>
-                <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-blue-100 text-blue-800">POST</span>
-              </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
-                <span className="font-mono text-slate-700 font-medium">/auth/register</span>
-                <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-blue-100 text-blue-800">POST</span>
-              </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-100">
-                <span className="font-mono text-slate-700 font-medium">/orders</span>
-                <span className="px-2 py-0.5 rounded font-mono font-bold text-[10px] bg-purple-100 text-purple-800">POST / GET</span>
-              </div>
-            </div>
           </div>
 
           <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-xs space-y-4">
