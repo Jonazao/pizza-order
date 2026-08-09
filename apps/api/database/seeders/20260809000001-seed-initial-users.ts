@@ -10,7 +10,7 @@ export = {
 
     await queryInterface.bulkInsert('users', [
       {
-        id: '11111111-1111-1111-1111-111111111111',
+        id: '11111111-1111-4111-8111-111111111111',
         name: 'John Customer',
         email: 'customer@example.com',
         password: customerPassword,
@@ -19,7 +19,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '22222222-2222-2222-2222-222222222222',
+        id: '22222222-2222-4222-8222-222222222222',
         name: 'Alice Employee',
         email: 'employee@example.com',
         password: employeePassword,

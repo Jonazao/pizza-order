@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CatalogItem } from './models/catalog-item.model';
 import { CatalogItemResponseDto } from './dto/catalog-item-response.dto';
+import { serializeCatalogItem } from './serializers/catalog-item.serializer';
 
 @Injectable()
 export class CatalogService {
@@ -17,6 +18,6 @@ export class CatalogService {
         ['title', 'ASC'],
       ],
     });
-    return items.map(item => item.get({ plain: true }) as CatalogItemResponseDto);
+    return items.map(serializeCatalogItem);
   }
 }

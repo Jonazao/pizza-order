@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { User, UserRole, Session } from './models';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { serializeUser } from './serializers/user.serializer';
 
 @Injectable()
 export class AuthService {
@@ -46,12 +47,7 @@ export class AuthService {
     });
 
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-      },
+      user: serializeUser(user),
       accessToken,
     };
   }
@@ -81,12 +77,7 @@ export class AuthService {
     });
 
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-      },
+      user: serializeUser(user),
       accessToken,
     };
   }

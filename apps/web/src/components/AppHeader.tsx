@@ -33,6 +33,13 @@ export function AppHeader() {
             Pizza Catalog
           </Link>
           <Link
+            href="/pizza-builder"
+            className={`transition hover:text-emerald-700 ${pathname === '/pizza-builder' ? 'text-emerald-700 font-semibold' : ''
+              }`}
+          >
+            Pizza Builder
+          </Link>
+          <Link
             href="/developer"
             className={`transition hover:text-emerald-700 ${pathname === '/developer' ? 'text-emerald-700 font-semibold' : ''
               }`}

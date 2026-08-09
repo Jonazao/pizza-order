@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { User, UserRole, Session } from '../models';
+import { serializeUser } from '../serializers/user.serializer';
 
 export interface JwtPayload {
   sub: string;
@@ -51,11 +52,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException('User no longer exists');
     }
 
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-    };
+    return serializeUser(user);
   }
 }

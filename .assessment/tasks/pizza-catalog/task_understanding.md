@@ -4,12 +4,12 @@
 We need to create the catalog base for a future pizza builder wizard. This requires creating the database models/migrations, backend API endpoints (NestJS), initial seeders, and a dedicated frontend catalog page route (Next.js App Router) with rich UI/UX components.
 
 ## DoD (Definition of Done)
-- [ ] All existing build, lint, and test suites pass.
-- [ ] Catalog database models, migrations, and seeders created with common options for standard, vegan, and healthy pizzas across 4 categories (Crust, Sauce, Base, Toppings).
-- [ ] NestJS backend catalog module & REST API endpoints created to serve catalog categories and items.
-- [ ] Dedicated Next.js page route created for the Pizza Catalog (`/catalog` or `/pizza-catalog`).
-- [ ] Unpaginated category section layout rendering items in cards with title, description, price, category badges, and visual tags.
-- [ ] Premium UI/UX design adhering to design tokens, responsive layout, dark/light harmonious aesthetics, and subtle micro-interactions.
+- [x] All existing build, lint, and test suites pass.
+- [x] Catalog database models, migrations, and seeders created with common options for standard, vegan, and healthy pizzas across 4 categories (Crust, Sauce, Base, Toppings).
+- [x] NestJS backend catalog module & REST API endpoints created to serve catalog categories and items.
+- [x] Dedicated Next.js page route created for the Pizza Catalog (`/catalog` or `/pizza-catalog`).
+- [x] Unpaginated category section layout rendering items in cards with title, description, price, category badges, and visual tags.
+- [x] Premium UI/UX design adhering to design tokens, responsive layout, dark/light harmonious aesthetics, and subtle micro-interactions.
 
 ## Constraints & Boundaries
 - **Explicit Constraints**:

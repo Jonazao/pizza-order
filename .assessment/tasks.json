@@ -6,7 +6,15 @@
       "title": "Pizza Catalog Base for Future Pizza Builder Wizard",
       "status": "Completed",
       "created_at": "2026-08-09T07:33:50Z",
-      "updated_at": "2026-08-09T08:33:35Z"
+      "updated_at": "2026-08-09T21:43:50Z"
+    },
+    {
+      "id": "pizza-builder",
+      "name": "Pizza Builder",
+      "title": "We want to be able to create Custom Pizzas for an specific user. The pizza build should be persisted in the database for further quick orders.",
+      "status": "Completed",
+      "created_at": "2026-08-09T08:52:23Z",
+      "updated_at": "2026-08-09T21:38:30Z"
     }
   ]
 }

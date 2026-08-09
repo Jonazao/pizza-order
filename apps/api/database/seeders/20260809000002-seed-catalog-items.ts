@@ -7,7 +7,7 @@ export = {
     await queryInterface.bulkInsert('catalog_items', [
       // Crusts
       {
-        id: '33333333-3333-3333-3333-333333333301',
+        id: '33333333-3333-4333-8333-333333333301',
         title: 'Classic Hand-Tossed Crust',
         description: 'Traditional garlic-brushed hand-tossed wheat crust, crispy on the outside and soft on the inside.',
         price: 3.00,
@@ -18,7 +18,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '33333333-3333-3333-3333-333333333302',
+        id: '33333333-3333-4333-8333-333333333302',
         title: 'Gluten-Free Cauliflower Crust',
         description: 'Light, crispy gluten-free crust made from real cauliflower and herbs. Excellent low-carb option.',
         price: 5.00,
@@ -29,7 +29,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '33333333-3333-3333-3333-333333333303',
+        id: '33333333-3333-4333-8333-333333333303',
         title: 'Organic Whole Wheat Crust',
         description: 'Fiber-rich whole wheat dough crafted from organic grains, offering a nutty texture and wholesome feel.',
         price: 4.00,
@@ -40,7 +40,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '33333333-3333-3333-3333-333333333304',
+        id: '33333333-3333-4333-8333-333333333304',
         title: 'Wild Sourdough Crust',
         description: 'Naturally fermented wild yeast sourdough, providing deep signature flavor profiles and easier digestion.',
         price: 3.50,
@@ -53,7 +53,7 @@ export = {
 
       // Sauces
       {
-        id: '33333333-3333-3333-3333-333333333305',
+        id: '33333333-3333-4333-8333-333333333305',
         title: 'Classic San Marzano Marinara',
         description: 'Slow-simmered vine-ripened San Marzano tomatoes, fresh basil, organic extra virgin olive oil, and garlic.',
         price: 1.00,
@@ -64,7 +64,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '33333333-3333-3333-3333-333333333306',
+        id: '33333333-3333-4333-8333-333333333306',
         title: 'Creamy Garlic Alfredo',
         description: 'Rich, luxurious white sauce made from fresh heavy cream, butter, and authentic aged Parmesan reggiano.',
         price: 1.50,
@@ -75,7 +75,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '33333333-3333-3333-3333-333333333307',
+        id: '33333333-3333-4333-8333-333333333307',
         title: 'Basil Pesto Infusion',
         description: 'Fragrant blend of fresh sweet basil leaves, toasted pine nuts, garlic, grated romano, and premium olive oil.',
         price: 1.75,
@@ -88,7 +88,7 @@ export = {
 
       // Bases (Cheese or options)
       {
-        id: '33333333-3333-3333-3333-333333333308',
+        id: '33333333-3333-4333-8333-333333333308',
         title: 'Shredded Whole-Milk Mozzarella',
         description: 'Rich, gooey whole-milk mozzarella cheese that melts into a beautiful classic golden stretch.',
         price: 2.00,
@@ -99,7 +99,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '33333333-3333-3333-3333-333333333309',
+        id: '33333333-3333-4333-8333-333333333309',
         title: 'Plant-Based Mozzarella',
         description: 'Premium vegan mozzarella alternative made from cashews. Melts beautifully and is dairy-free.',
         price: 3.00,
@@ -110,7 +110,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '33333333-3333-3333-3333-333333333310',
+        id: '33333333-3333-4333-8333-333333333310',
         title: 'Fresh Bufala Mozzarella Pearls',
         description: 'Authentic imported Italian buffalo mozzarella pearls, offering a light, clean, and delicate taste.',
         price: 2.50,
@@ -123,7 +123,7 @@ export = {
 
       // Toppings
       {
-        id: '33333333-3333-3333-3333-333333333311',
+        id: '33333333-3333-4333-8333-333333333311',
         title: 'Artisanal Pepperoni Cups',
         description: 'Premium natural-casing pork and beef pepperoni slices that crisp and curl into tiny cups when baked.',
         price: 2.00,
@@ -134,7 +134,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '33333333-3333-3333-3333-333333333312',
+        id: '33333333-3333-4333-8333-333333333312',
         title: 'Balsamic Sautéed Mushrooms',
         description: 'Organic baby bella mushrooms sautéed in a splash of sweet balsamic glaze and fresh rosemary.',
         price: 1.50,
@@ -145,7 +145,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '33333333-3333-3333-3333-333333333313',
+        id: '33333333-3333-4333-8333-333333333313',
         title: 'Seasoned Vegan Sausage Crumbles',
         description: 'Savoury plant-based sausage seasoned with fennel seeds, garlic, sage, and crushed black pepper.',
         price: 2.50,
@@ -156,7 +156,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '33333333-3333-3333-3333-333333333314',
+        id: '33333333-3333-4333-8333-333333333314',
         title: 'Baby Spinach & Arugula Greens',
         description: 'Tender baby spinach leaves and wild arugula, tossed fresh right after exiting the hot pizza oven.',
         price: 1.25,
@@ -167,7 +167,7 @@ export = {
         updatedAt: now,
       },
       {
-        id: '33333333-3333-3333-3333-333333333315',
+        id: '33333333-3333-4333-8333-333333333315',
         title: 'Grilled Rosemary Chicken Breast',
         description: 'Lean, juicy strips of grilled chicken breast seasoned with organic rosemary, olive oil, and sea salt.',
         price: 2.25,

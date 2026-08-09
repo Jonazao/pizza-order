@@ -5,13 +5,14 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser, CurrentUserEntity, CurrentToken } from '../common';
+import { AUTH_ROUTES } from './routes';
 
 @ApiTags('Authentication')
-@Controller('auth')
+@Controller(AUTH_ROUTES.base)
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
-  @Post('register')
+  @Post(AUTH_ROUTES.register)
   @ApiOperation({ summary: 'Register a new Customer user' })
   @ApiResponse({ status: 201, description: 'User registered successfully and session token returned' })
   @ApiResponse({ status: 400, description: 'Validation failed' })
@@ -20,7 +21,7 @@ export class AuthController {
     return this.authService.register(registerDto);
   }
 
-  @Post('login')
+  @Post(AUTH_ROUTES.login)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Authenticate user (Customer or Employee) and return JWT session token' })
   @ApiResponse({ status: 200, description: 'User authenticated successfully' })
@@ -29,7 +30,7 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Post('logout')
+  @Post(AUTH_ROUTES.logout)
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
@@ -39,7 +40,7 @@ export class AuthController {
     return this.authService.logout(token);
   }
 
-  @Get('profile')
+  @Get(AUTH_ROUTES.profile)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Retrieve authenticated user profile and role' })

@@ -87,91 +87,10 @@ export default function Home() {
               <div className="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center text-2xl font-bold">
                 🥑
               </div>
-              <h4 className="text-lg font-bold text-slate-900">Macro & Calorie Sync</h4>
+              <h4 className="text-lg font-bold text-slate-900">Fresh Toppings</h4>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Real-time nutrition breakdown per slice as you add toppings and customize your order.
+                Choose from a variety of fresh and organic toppings to create your perfect pizza.
               </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Signature Artisanal Pizzas Showcase */}
-        <section id="specialties" className="space-y-6">
-          <div className="flex justify-between items-end">
-            <div>
-              <h3 className="text-2xl font-extrabold text-slate-900">Signature Healthy Creations</h3>
-              <p className="text-slate-600 text-sm">Chef-inspired pizza combinations ready to order</p>
-            </div>
-          </div>
-
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <div className="group rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-lg transition">
-              <div className="h-44 bg-gradient-to-br from-emerald-100 to-teal-50 flex items-center justify-center text-6xl group-hover:scale-105 transition duration-300">
-                🍕
-              </div>
-              <div className="p-5 space-y-3">
-                <div className="flex justify-between items-start">
-                  <h4 className="font-bold text-slate-900 text-base">Garden Harvest Sourdough</h4>
-                  <span className="text-sm font-extrabold text-emerald-700">$18.99</span>
-                </div>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Organic sourdough, pesto sauce, wild arugula, cherry tomatoes, and vegan mozzarella.
-                </p>
-                <div className="flex gap-2">
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    Vegan
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                    Organic
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="group rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-lg transition">
-              <div className="h-44 bg-gradient-to-br from-amber-100 to-orange-50 flex items-center justify-center text-6xl group-hover:scale-105 transition duration-300">
-                🧄
-              </div>
-              <div className="p-5 space-y-3">
-                <div className="flex justify-between items-start">
-                  <h4 className="font-bold text-slate-900 text-base">Truffle Mushroom Cauliflower</h4>
-                  <span className="text-sm font-extrabold text-emerald-700">$21.50</span>
-                </div>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Gluten-free cauliflower crust, garlic cashew cream, roasted cremini mushrooms, and truffle oil.
-                </p>
-                <div className="flex gap-2">
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">
-                    Gluten-Free
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 border border-teal-200">
-                    Low-Carb
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="group rounded-2xl bg-white border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-lg transition">
-              <div className="h-44 bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center text-6xl group-hover:scale-105 transition duration-300">
-                🌿
-              </div>
-              <div className="p-5 space-y-3">
-                <div className="flex justify-between items-start">
-                  <h4 className="font-bold text-slate-900 text-base">Artisanal Margherita Supreme</h4>
-                  <span className="text-sm font-extrabold text-emerald-700">$17.50</span>
-                </div>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Whole wheat crust, San Marzano tomatoes, fresh buffalo mozzarella, and sweet basil leaves.
-                </p>
-                <div className="flex gap-2">
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    Classic
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                    Fresh Basil
-                  </span>
-                </div>
-              </div>
             </div>
           </div>
         </section>

@@ -2,9 +2,10 @@ import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { InjectConnection } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
+import { HEALTH_ROUTES } from './routes';
 
 @ApiTags('Health')
-@Controller('health')
+@Controller(HEALTH_ROUTES.base)
 export class HealthController {
   constructor(
     @InjectConnection()
