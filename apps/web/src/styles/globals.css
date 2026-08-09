@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+
+:root {
+  --font-outfit: 'Outfit', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+
+  --color-primary: #059669;
+  --color-primary-hover: #047857;
+  --color-secondary: #10B981;
+  --color-accent: #EA580C;
+  --color-accent-hover: #C2410C;
+  --color-background: #FAFAF9;
+  --color-surface: #FFFFFF;
+  --color-foreground: #0F172A;
+  --color-muted: #64748B;
+  --color-border: #E2E8F0;
+}
+
+body {
+  font-family: var(--font-inter);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-outfit);
+}
+

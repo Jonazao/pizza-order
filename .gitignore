@@ -1,0 +1,39 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build Outputs
+dist
+.next
+out
+build
+
+# Environment Variables
+.env
+.env.local
+.env.production
+.env.development
+
+# IDE & Editor files
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test coverage
+coverage
+
+# Docker volumes
+postgres_data

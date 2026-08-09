@@ -1,0 +1,21 @@
+{
+  "name": "pizza-order-builder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pizza Order Builder Simple Monorepo",
+  "scripts": {
+    "dev": "docker compose up",
+    "dev:build": "docker compose up --build",
+    "dev:api": "npm run start:dev --prefix apps/api",
+    "dev:web": "npm run dev --prefix apps/web",
+    "down": "docker compose down",
+    "down:clean": "docker compose down -v",
+    "build": "npm run build --prefix apps/api && npm run build --prefix apps/web",
+    "test": "npm run test --prefix apps/api",
+    "test:e2e": "npm run test:e2e --prefix apps/api",
+    "db:migrate": "npm run db:migrate --prefix apps/api",
+    "db:migrate:undo": "npm run db:migrate:undo --prefix apps/api",
+    "db:seed": "npm run db:seed --prefix apps/api",
+    "db:seed:undo": "npm run db:seed:undo --prefix apps/api"
+  }
+}
