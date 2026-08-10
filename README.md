@@ -11,7 +11,7 @@ pizza-order-builder/
 ├── docker-compose.yml   # Docker Orchestration Configuration
 ├── package.json         # Workspace Scripts Runner
 ├── .env.example         # Environment Variable Template
-├── CLAUDE.md            # AI Tools Work Instructions
+├── AGENTS.md            # AI Tools Work Instructions
 └── README.md            # Development Documentation
 ```
 
@@ -25,9 +25,37 @@ pizza-order-builder/
 
 ## Local Setup
 
+### Quick Start (Docker only)
+
+A fresh clone requires only Docker — no local Node.js/npm needed.
+
+```bash
+git clone <repo-url> pizza-order
+cd pizza-order
+
+# 1. Create your environment file
+cp .env.example .env
+
+# 2. Build and start the stack (PostgreSQL, API, Web) in the background
+docker compose up -d --build
+
+# 3. Apply database migrations
+docker compose exec api npm run db:migrate
+
+# 4. Load the seed data (demo accounts + catalog)
+docker compose exec api npm run db:seed
+
+# 5. Done — open the app
+#    Web client:      http://localhost:3001
+#    API entry point: http://localhost:3000/api
+#    Swagger docs:    http://localhost:3000/api/docs
+```
+
+The `db:migrate` and `db:seed` commands compile and run inside the `api` container, so nothing is installed on your host machine. Re-run them any time you pull fresh changes that add migrations or seeders.
+
 ### Prerequisites
 * Docker and Docker Compose installed.
-* Node.js (v18 or higher) and npm installed locally.
+* Node.js (v18 or higher) and npm installed locally (only needed for host-side commands below).
 
 ### Environment Configuration
 Copy the `.env.example` file to `.env`:
@@ -44,6 +72,11 @@ npm run dev
 To force-rebuild the containers, run:
 ```bash
 npm run dev:build
+```
+After starting, apply migrations and seed data (if you prefer host-side npm instead of the container commands above):
+```bash
+npm run db:migrate
+npm run db:seed
 ```
 
 ### Stopped Stack & Resetting DB Volumes

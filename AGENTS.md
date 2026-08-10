@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 ## Running the Application
 - Start local environment: `npm run dev` (runs `docker compose up`)
@@ -9,7 +9,7 @@
 ## Building and Testing (Host commands)
 - Build all projects: `npm run build`
 - Run backend unit tests: `npm run test`
-- Run backend E2E tests: `npm run test:e2e`
+- Run backend E2E tests: `npm run test:e2e` (requires PostgreSQL running, e.g. `npm run dev`; the suite auto-provisions a dedicated `pizza_test` database via migrations + seeders on each run)
 
 ## Database Migrations
 - Apply migrations: `npm run db:migrate`
