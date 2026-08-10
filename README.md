@@ -1,4 +1,4 @@
-# Pizza Order Builder - Scaffolding
+# Pizza Order Builder
 
 This project establishes the reproducible scaffolding for a complete Pizza Order Builder application. It sets up NestJS, Next.js, and PostgreSQL using a simple monorepo structure orchestrated via Docker Compose.
 
