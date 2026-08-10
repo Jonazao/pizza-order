@@ -11,6 +11,7 @@ import { CustomPizzaResponseDto } from './dto/custom-pizza-response.dto';
 import { serializeCustomPizza } from './serializers/custom-pizza.serializer';
 import { PaginatedCustomPizzasResponse } from './interfaces';
 import { setRlsContext } from '../common/helpers/rls.helper';
+import { escapeLikeWildcards } from '../common/helpers/like.helper';
 
 @Injectable()
 export class CustomPizzaService {
@@ -115,7 +116,7 @@ export class CustomPizzaService {
     const searchTerm = search?.trim();
 
     const where: WhereOptions<CustomPizza> = searchTerm
-      ? { userId, name: { [Op.iLike]: `%${searchTerm}%` } }
+      ? { userId, name: { [Op.iLike]: `%${escapeLikeWildcards(searchTerm)}%` } }
       : { userId };
 
     const transaction = await this.sequelize.transaction();

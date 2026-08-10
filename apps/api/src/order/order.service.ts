@@ -25,6 +25,7 @@ import { OrderWhereOptions, PaginatedOrdersResponse } from './interfaces';
 import { canTransition } from './helpers/order-status.helper';
 import { round2 } from '../common/helpers/money.helper';
 import { setRlsContext } from '../common/helpers/rls.helper';
+import { escapeLikeWildcards } from '../common/helpers/like.helper';
 import { OrderStatus } from './enums/order-status.enum';
 
 @Injectable()
@@ -148,8 +149,8 @@ export class OrderService {
     if (search && search.trim()) {
       const term = search.trim();
       const conditions: OrderWhereOptions[] = [
-        { '$user.name$': { [Op.iLike]: `%${term}%` } },
-        { '$user.email$': { [Op.iLike]: `%${term}%` } },
+        { '$user.name$': { [Op.iLike]: `%${escapeLikeWildcards(term)}%` } },
+        { '$user.email$': { [Op.iLike]: `%${escapeLikeWildcards(term)}%` } },
       ];
       if (isUUID(term)) {
         conditions.push({ id: term });
