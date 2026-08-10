@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { AppHeader } from '@/components/AppHeader';
 import { useAuth } from '@/lib/auth/auth-context';
 import { getCustomPizzas, CustomPizza } from '@/lib/api/custom-pizza';
 import { createOrder, Order } from '@/lib/api/order';
@@ -19,7 +17,6 @@ const PAGE_SIZE = 9;
 const money = (value: number) => `$${value.toFixed(2)}`;
 
 export default function OrderingPage() {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const { user, isLoading: authLoading } = useAuth();
 
@@ -33,19 +30,10 @@ export default function OrderingPage() {
   const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      router.replace('/login');
-    } else if (user.role === 'Employee') {
-      router.replace('/orders');
-    }
-  }, [user, authLoading, router]);
-
   const pizzasQuery = useQuery({
     queryKey: ['custom-pizzas', 'ordering', { page, search, sortBy, sortOrder }],
     queryFn: () => getCustomPizzas({ page, limit: PAGE_SIZE, search, sortBy, sortOrder }),
-    enabled: !!user && user.role === 'Customer',
+    enabled: !!user,
   });
 
   const data = pizzasQuery.data;
@@ -103,24 +91,19 @@ export default function OrderingPage() {
     }
   };
 
-  if (authLoading || !user || user.role !== 'Customer') {
+  if (authLoading || !user) {
     return (
-      <div className="flex-1 min-h-screen bg-stone-50">
-        <AppHeader />
-        <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-24 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-10 h-10 rounded-full border-4 border-emerald-200 border-t-emerald-600 animate-spin"></div>
-            <p className="text-xs font-medium text-slate-500">Loading ordering...</p>
-          </div>
-        </main>
-      </div>
+      <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-24 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 rounded-full border-4 border-emerald-200 border-t-emerald-600 animate-spin"></div>
+          <p className="text-xs font-medium text-slate-500">Loading ordering...</p>
+        </div>
+      </main>
     );
   }
 
   return (
-    <div className="flex-1 min-h-screen bg-stone-50">
-      <AppHeader />
-
+    <>
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Custom pizza selection */}
         <div className="lg:col-span-2 flex flex-col gap-5">
@@ -430,6 +413,6 @@ export default function OrderingPage() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

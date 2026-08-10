@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AppHeader } from '@/components/AppHeader';
 import { getCatalogItems, CatalogItem, CatalogCategory } from '@/lib/api/catalog';
 import Link from 'next/link';
 
@@ -56,10 +55,7 @@ export default function CatalogPage() {
   const categories: CatalogCategory[] = ['Crust', 'Sauce', 'Base', 'Toppings'];
 
   return (
-    <div className="flex-1 flex flex-col justify-between min-h-screen bg-stone-50">
-      {/* Reusable Header Navigation */}
-      <AppHeader />
-
+    <>
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-12 flex flex-col gap-10">
         {/* Banner Section */}
@@ -223,6 +219,6 @@ export default function CatalogPage() {
           </div>
         </div>
       </footer>
-    </div>
+    </>
   );
 }

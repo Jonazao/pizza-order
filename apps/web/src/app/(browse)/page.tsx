@@ -1,12 +1,8 @@
-import { AppHeader } from '@/components/AppHeader';
 import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="flex-1 flex flex-col justify-between min-h-screen bg-stone-50">
-      {/* Reusable Header Navigation */}
-      <AppHeader />
-
+    <>
       {/* Main Hero Section */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-12 flex flex-col gap-16">
         <section className="relative rounded-3xl bg-gradient-to-br from-emerald-900 via-emerald-800 to-teal-900 text-white overflow-hidden p-8 md:p-14 shadow-2xl shadow-emerald-900/10">
@@ -114,7 +110,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </div>
+    </>
   );
 }
 

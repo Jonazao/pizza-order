@@ -29,7 +29,7 @@ export function HeaderAuth() {
         </div>
         {user.role === 'Customer' && (
           <Link
-            href="/ordering"
+            href="/customer/ordering"
             className="px-4 py-1.5 text-xs font-bold rounded-full bg-orange-600 hover:bg-orange-700 text-white shadow-md shadow-orange-600/20 transition cursor-pointer"
           >
             Order Now

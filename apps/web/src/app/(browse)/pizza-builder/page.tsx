@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AppHeader } from '@/components/AppHeader';
 import { getCatalogItems, CatalogItem } from '@/lib/api/catalog';
 import { useAuth } from '@/lib/auth/auth-context';
 import { createCustomPizza, getCustomPizzas } from '@/lib/api/custom-pizza';
@@ -147,42 +146,38 @@ export default function PizzaBuilderPage() {
   ];
 
   return (
-    <div className="flex-1 flex flex-col justify-between min-h-screen bg-stone-50">
-      <AppHeader />
-
+    <>
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
-        
+
         {/* Main Builder Interface */}
         <div className="lg:col-span-2 flex flex-col gap-6">
-          
+
           {/* Stepper Progress */}
           <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-xs">
             <div className="flex items-center justify-between relative">
               {stepsList.map((step, idx) => (
                 <div key={step.num} className="flex flex-col items-center flex-1 z-10">
                   <div
-                    className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-sm border-2 transition duration-300 ${
-                      currentStep === step.num
+                    className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-sm border-2 transition duration-300 ${currentStep === step.num
                         ? 'bg-emerald-600 border-emerald-600 text-white shadow-md shadow-emerald-600/20'
                         : currentStep > step.num
-                        ? 'bg-emerald-50 border-emerald-500 text-emerald-700'
-                        : 'bg-white border-slate-200 text-slate-400'
-                    }`}
+                          ? 'bg-emerald-50 border-emerald-500 text-emerald-700'
+                          : 'bg-white border-slate-200 text-slate-400'
+                      }`}
                   >
                     {currentStep > step.num ? '✓' : step.num}
                   </div>
                   <span
-                    className={`text-[10px] md:text-xs font-semibold mt-2.5 transition ${
-                      currentStep === step.num
+                    className={`text-[10px] md:text-xs font-semibold mt-2.5 transition ${currentStep === step.num
                         ? 'text-emerald-700 font-bold'
                         : 'text-slate-500 font-medium'
-                    }`}
+                      }`}
                   >
                     {step.label}
                   </span>
                 </div>
               ))}
-              
+
               {/* Connector line */}
               <div className="absolute left-1/10 right-1/10 top-5 h-0.5 bg-slate-100 -z-10">
                 <div
@@ -233,7 +228,7 @@ export default function PizzaBuilderPage() {
               </div>
             ) : (
               <div className="flex-1 flex flex-col gap-6">
-                
+
                 {/* Step 1: Crust Selection */}
                 {currentStep === 1 && (
                   <div className="space-y-5">
@@ -246,11 +241,10 @@ export default function PizzaBuilderPage() {
                         <div
                           key={item.id}
                           onClick={() => setSelectedCrust(item)}
-                          className={`group p-5 rounded-2xl border text-left cursor-pointer transition flex flex-col justify-between ${
-                            selectedCrust?.id === item.id
+                          className={`group p-5 rounded-2xl border text-left cursor-pointer transition flex flex-col justify-between ${selectedCrust?.id === item.id
                               ? 'border-emerald-600 bg-emerald-50/20 ring-1 ring-emerald-600'
                               : 'border-slate-200 hover:border-emerald-600/40 hover:bg-stone-50/50'
-                          }`}
+                            }`}
                         >
                           <div className="space-y-2">
                             <div className="flex justify-between items-start gap-2">
@@ -283,11 +277,10 @@ export default function PizzaBuilderPage() {
                         <div
                           key={item.id}
                           onClick={() => setSelectedSauce(item)}
-                          className={`group p-5 rounded-2xl border text-left cursor-pointer transition flex flex-col justify-between ${
-                            selectedSauce?.id === item.id
+                          className={`group p-5 rounded-2xl border text-left cursor-pointer transition flex flex-col justify-between ${selectedSauce?.id === item.id
                               ? 'border-emerald-600 bg-emerald-50/20 ring-1 ring-emerald-600'
                               : 'border-slate-200 hover:border-emerald-600/40 hover:bg-stone-50/50'
-                          }`}
+                            }`}
                         >
                           <div className="space-y-2">
                             <div className="flex justify-between items-start gap-2">
@@ -320,11 +313,10 @@ export default function PizzaBuilderPage() {
                         <div
                           key={item.id}
                           onClick={() => setSelectedBase(item)}
-                          className={`group p-5 rounded-2xl border text-left cursor-pointer transition flex flex-col justify-between ${
-                            selectedBase?.id === item.id
+                          className={`group p-5 rounded-2xl border text-left cursor-pointer transition flex flex-col justify-between ${selectedBase?.id === item.id
                               ? 'border-emerald-600 bg-emerald-50/20 ring-1 ring-emerald-600'
                               : 'border-slate-200 hover:border-emerald-600/40 hover:bg-stone-50/50'
-                          }`}
+                            }`}
                         >
                           <div className="space-y-2">
                             <div className="flex justify-between items-start gap-2">
@@ -359,11 +351,10 @@ export default function PizzaBuilderPage() {
                           <div
                             key={item.id}
                             onClick={() => handleToppingToggle(item)}
-                            className={`group p-4 rounded-xl border text-left cursor-pointer transition flex flex-col justify-between ${
-                              isSelected
+                            className={`group p-4 rounded-xl border text-left cursor-pointer transition flex flex-col justify-between ${isSelected
                                 ? 'border-emerald-600 bg-emerald-50/20 ring-1 ring-emerald-600'
                                 : 'border-slate-200 hover:border-emerald-600/40 hover:bg-stone-50/50'
-                            }`}
+                              }`}
                           >
                             <div className="space-y-2">
                               <div className="flex justify-between items-start gap-2">
@@ -408,7 +399,7 @@ export default function PizzaBuilderPage() {
                       {/* Selection Summary Table */}
                       <div className="rounded-2xl border border-slate-200 bg-stone-50/50 p-4 space-y-3.5">
                         <h4 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Recipe Blueprint</h4>
-                        
+
                         <div className="divide-y divide-slate-100 text-xs space-y-2.5">
                           <div className="flex justify-between pt-2.5 first:pt-0">
                             <span className="text-slate-500 font-medium">Crust Type</span>
@@ -453,11 +444,10 @@ export default function PizzaBuilderPage() {
                     <button
                       onClick={handleNext}
                       disabled={!isStepValid()}
-                      className={`px-6 py-2.5 text-xs font-bold rounded-xl text-white transition cursor-pointer ${
-                        isStepValid()
+                      className={`px-6 py-2.5 text-xs font-bold rounded-xl text-white transition cursor-pointer ${isStepValid()
                           ? 'bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/10'
                           : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                      }`}
+                        }`}
                     >
                       Continue
                     </button>
@@ -465,11 +455,10 @@ export default function PizzaBuilderPage() {
                     <button
                       onClick={handleSavePizza}
                       disabled={!isStepValid() || savePizzaMutation.isPending || !user}
-                      className={`px-6 py-2.5 text-xs font-bold rounded-xl text-white transition cursor-pointer ${
-                        isStepValid() && !savePizzaMutation.isPending && user
+                      className={`px-6 py-2.5 text-xs font-bold rounded-xl text-white transition cursor-pointer ${isStepValid() && !savePizzaMutation.isPending && user
                           ? 'bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/10'
                           : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                      }`}
+                        }`}
                     >
                       {savePizzaMutation.isPending ? 'Saving recipe...' : 'Save Pizza & Exit'}
                     </button>
@@ -482,14 +471,14 @@ export default function PizzaBuilderPage() {
 
         {/* Sidebar Summary & Saved Creations */}
         <div className="space-y-6">
-          
+
           {/* Real-time Order Summary */}
           <div className="p-6 rounded-3xl bg-slate-950 text-white border border-slate-800 shadow-lg relative overflow-hidden flex flex-col justify-between min-h-[220px]">
             <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none"></div>
-            
+
             <div className="space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400">Live Price Estimator</h3>
-              
+
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between text-slate-300">
                   <span>Base Ingredients</span>
@@ -574,14 +563,6 @@ export default function PizzaBuilderPage() {
                         </p>
                       )}
                     </div>
-
-                    {/* Quick Order Button */}
-                    <button
-                      onClick={() => alert(`Order placed for ${pizza.name}! (Simulated)`)}
-                      className="w-full mt-2 py-1.5 text-[10px] font-bold text-center text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition cursor-pointer"
-                    >
-                      Quick Order
-                    </button>
                   </div>
                 ))}
               </div>
@@ -601,6 +582,6 @@ export default function PizzaBuilderPage() {
           </div>
         </div>
       </footer>
-    </div>
+    </>
   );
 }

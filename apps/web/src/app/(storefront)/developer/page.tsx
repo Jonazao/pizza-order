@@ -1,4 +1,3 @@
-import { AppHeader } from '@/components/AppHeader';
 import { SystemStatusCard } from '@/components/SystemStatusCard';
 import Link from 'next/link';
 
@@ -9,10 +8,7 @@ export const metadata = {
 
 export default function DeveloperPage() {
   return (
-    <div className="flex-1 flex flex-col justify-between min-h-screen bg-stone-50">
-      {/* Reusable Header Navigation */}
-      <AppHeader />
-
+    <>
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-12 flex flex-col gap-12">
         {/* Developer Portal Hero Banner */}
@@ -176,6 +172,6 @@ export default function DeveloperPage() {
           </div>
         </div>
       </footer>
-    </div>
+    </>
   );
 }

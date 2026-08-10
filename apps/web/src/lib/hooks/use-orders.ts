@@ -14,17 +14,19 @@ import {
 
 export const ORDERS_QUERY_KEY = ['orders'] as const;
 
-export function useOrderHistory(params: { page: number; limit: number; status?: OrderStatus }) {
+export function useOrderHistory({ enabled, ...params }: { page: number; limit: number; status?: OrderStatus; enabled?: boolean }) {
   return useQuery<PaginatedOrders, Error>({
     queryKey: ['orders', 'history', params],
     queryFn: () => getOrders(params),
+    enabled,
   });
 }
 
-export function useEmployeeOrders(params: { page: number; limit: number; status?: OrderStatus; search?: string }) {
+export function useEmployeeOrders({ enabled, ...params }: { page: number; limit: number; status?: OrderStatus; search?: string; enabled?: boolean }) {
   return useQuery<PaginatedOrders, Error>({
     queryKey: ['orders', 'employee', params],
     queryFn: () => getEmployeeOrders(params),
+    enabled,
   });
 }
 

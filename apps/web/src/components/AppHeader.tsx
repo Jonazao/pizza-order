@@ -9,13 +9,17 @@ export function AppHeader() {
   const pathname = usePathname();
   const { user } = useAuth();
 
+  const isCustomer = user?.role === 'Customer';
+  const isEmployee = user?.role === 'Employee';
+  const ordersHref = isEmployee ? '/employee/orders' : '/customer/orders';
+
   const navLinkClass = (href: string) =>
     `transition hover:text-emerald-700 ${pathname === href ? 'text-emerald-700 font-semibold' : ''}`;
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80">
       <div className="max-w-7xl w-full mx-auto flex justify-between items-center px-6 py-3.5">
-        <Link href="/" className="flex items-center gap-3">
+        <Link href={isEmployee ? ordersHref : '/'} className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-md shadow-emerald-600/20 font-bold">
             🌿
           </div>
@@ -33,22 +37,21 @@ export function AppHeader() {
           <Link href="/catalog" className={navLinkClass('/catalog')}>
             Pizza Catalog
           </Link>
-          <Link href="/pizza-builder" className={navLinkClass('/pizza-builder')}>
-            Pizza Builder
-          </Link>
-          {user?.role === 'Customer' && (
-            <Link href="/ordering" className={navLinkClass('/ordering')}>
+          {!isEmployee && (
+            <Link href="/pizza-builder" className={navLinkClass('/pizza-builder')}>
+              Pizza Builder
+            </Link>
+          )}
+          {isCustomer && (
+            <Link href="/customer/ordering" className={navLinkClass('/customer/ordering')}>
               Ordering
             </Link>
           )}
           {user && (
-            <Link href="/orders" className={navLinkClass('/orders')}>
+            <Link href={ordersHref} className={navLinkClass(ordersHref)}>
               Orders
             </Link>
           )}
-          <Link href="/developer" className={navLinkClass('/developer')}>
-            Developer Portal
-          </Link>
         </nav>
 
         <HeaderAuth />
