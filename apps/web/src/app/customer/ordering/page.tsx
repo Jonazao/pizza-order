@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/auth-context';
 import { getCustomPizzas, CustomPizza } from '@/lib/api/custom-pizza';
-import { createOrder, Order } from '@/lib/api/order';
+import { createOrder } from '@/lib/api/order';
+import { useSnackbar } from '@/components/snackbar/snackbar';
 
 interface CartLine {
   pizza: CustomPizza;
@@ -18,7 +20,9 @@ const money = (value: number) => `$${value.toFixed(2)}`;
 
 export default function OrderingPage() {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { user, isLoading: authLoading } = useAuth();
+  const snackbar = useSnackbar();
 
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -27,8 +31,6 @@ export default function OrderingPage() {
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [cart, setCart] = useState<CartLine[]>([]);
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
-  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const pizzasQuery = useQuery({
     queryKey: ['custom-pizzas', 'ordering', { page, search, sortBy, sortOrder }],
@@ -73,7 +75,6 @@ export default function OrderingPage() {
   };
 
   const handleSubmitOrder = async () => {
-    setSubmitError(null);
     try {
       const order = await createOrder({
         items: cart.map((line) => ({
@@ -81,13 +82,16 @@ export default function OrderingPage() {
           quantity: line.quantity,
         })),
       });
-      setPlacedOrder(order);
+      snackbar.success(
+        `🎉 Order #${order.id.slice(0, 8)} placed successfully! Total ${money(order.totalPrice)}.`
+      );
       setConfirmOpen(false);
       setCart([]);
       queryClient.invalidateQueries({ queryKey: ['orders'] });
+      router.push('/customer/orders');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to place order.';
-      setSubmitError(message);
+      snackbar.error(message);
     }
   };
 
@@ -148,26 +152,6 @@ export default function OrderingPage() {
               </button>
             </div>
           </div>
-
-          {submitError && (
-            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium">
-              ⚠️ {submitError}
-            </div>
-          )}
-
-          {placedOrder && (
-            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between gap-3">
-              <span className="text-xs font-medium">
-                🎉 Order <strong>#{placedOrder.id.slice(0, 8)}</strong> placed successfully! Total {money(placedOrder.totalPrice)}. Track it in your order history.
-              </span>
-              <button
-                onClick={() => setPlacedOrder(null)}
-                className="text-xs font-bold hover:underline cursor-pointer shrink-0"
-              >
-                Dismiss
-              </button>
-            </div>
-          )}
 
           {pizzasQuery.isLoading ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-3 py-24">
@@ -388,11 +372,6 @@ export default function OrderingPage() {
                   {money(cartTotal)}
                 </span>
               </div>
-              {submitError && (
-                <p className="mt-3 text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2">
-                  ⚠️ {submitError}
-                </p>
-              )}
             </div>
 
             <div className="flex gap-3 px-6 py-4 bg-slate-50 border-t border-slate-100">
@@ -404,8 +383,7 @@ export default function OrderingPage() {
               </button>
               <button
                 onClick={handleSubmitOrder}
-                disabled={submitError !== null}
-                className="flex-1 py-2.5 text-sm font-bold rounded-xl bg-orange-600 hover:bg-orange-700 text-white shadow-md shadow-orange-600/20 transition cursor-pointer disabled:opacity-50"
+                className="flex-1 py-2.5 text-sm font-bold rounded-xl bg-orange-600 hover:bg-orange-700 text-white shadow-md shadow-orange-600/20 transition cursor-pointer"
               >
                 Place Order
               </button>

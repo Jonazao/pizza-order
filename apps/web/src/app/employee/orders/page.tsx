@@ -4,13 +4,15 @@ import { useState } from 'react';
 import { useAuth } from '@/lib/auth/auth-context';
 import { Order, OrderStatus } from '@/lib/api/order';
 import { useEmployeeOrders, useUpdateOrderStatus } from '@/lib/hooks/use-orders';
-import { NEXT_STATUS, OrderCard } from '@/components/orders/order-card';
+import { NEXT_STATUS, OrderCard, shortId } from '@/components/orders/order-card';
 import { Pagination } from '@/components/orders/pagination';
+import { useSnackbar } from '@/components/snackbar/snackbar';
 
 const PAGE_SIZE = 10;
 
 export default function EmployeeOrdersPage() {
   const { user, isLoading: authLoading } = useAuth();
+  const snackbar = useSnackbar();
 
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<OrderStatus | ''>('');
@@ -31,7 +33,17 @@ export default function EmployeeOrdersPage() {
   const handleAdvance = (order: Order) => {
     const next = NEXT_STATUS[order.status];
     if (!next) return;
-    updateStatus.mutate({ id: order.id, status: next });
+    updateStatus.mutate(
+      { id: order.id, status: next },
+      {
+        onSuccess: () => {
+          snackbar.success(`✅ Order #${shortId(order.id)} advanced to ${next}.`);
+        },
+        onError: (err: Error) => {
+          snackbar.error(err.message || 'Failed to update order status.');
+        },
+      }
+    );
   };
 
   if (authLoading || !user) {

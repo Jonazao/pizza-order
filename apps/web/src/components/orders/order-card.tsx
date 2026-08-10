@@ -43,8 +43,9 @@ export function OrderCard({
   footer: (order: Order) => ReactNode;
 }) {
   return (
-    <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col gap-3">
-      <div className="flex justify-between items-center gap-2">
+    <div className="h-full p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col gap-3">
+      {/* Title */}
+      <div className="flex justify-between items-center gap-2 shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <span className="font-mono text-xs font-bold text-slate-900">
             #{shortId(order.id)}
@@ -61,7 +62,8 @@ export function OrderCard({
         </span>
       </div>
 
-      <div className="text-[11px] text-slate-500 font-light space-y-1">
+      {/* Fixed scrollable body */}
+      <div className="flex-1 min-h-0 max-h-[180px] overflow-y-auto pr-1 text-[11px] text-slate-500 font-light space-y-1">
         {order.items.map((item) => (
           <p key={item.customPizzaId} className="flex justify-between gap-2">
             <span className="truncate">
@@ -72,7 +74,8 @@ export function OrderCard({
         ))}
       </div>
 
-      <div className="flex justify-between items-center gap-2 border-t border-slate-100 pt-3">
+      {/* Footer actions */}
+      <div className="flex justify-between items-center gap-2 border-t border-slate-100 pt-3 shrink-0 mt-auto">
         <span className="text-[10px] text-slate-400 font-light">{formatDate(order.createdAt)}</span>
         <div>{footer(order)}</div>
       </div>

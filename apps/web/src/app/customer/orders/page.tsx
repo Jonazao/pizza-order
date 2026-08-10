@@ -6,11 +6,13 @@ import { Order, OrderStatus } from '@/lib/api/order';
 import { useCancelOrder, useOrderHistory } from '@/lib/hooks/use-orders';
 import { OrderCard, StatusBadge, money, shortId } from '@/components/orders/order-card';
 import { Pagination } from '@/components/orders/pagination';
+import { useSnackbar } from '@/components/snackbar/snackbar';
 
 const PAGE_SIZE = 10;
 
 export default function CustomerOrdersPage() {
   const { user, isLoading: authLoading } = useAuth();
+  const snackbar = useSnackbar();
 
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<OrderStatus | ''>('');
@@ -32,8 +34,15 @@ export default function CustomerOrdersPage() {
 
   const confirmCancel = () => {
     if (!cancelTarget) return;
-    cancelOrder.mutate(cancelTarget.id, {
-      onSettled: () => setCancelTarget(null),
+    const target = cancelTarget;
+    cancelOrder.mutate(target.id, {
+      onSuccess: () => {
+        snackbar.success(`🗑️ Order #${shortId(target.id)} cancelled.`);
+        setCancelTarget(null);
+      },
+      onError: (err: Error) => {
+        snackbar.error(err.message || 'Failed to cancel order.');
+      },
     });
   };
 
@@ -147,11 +156,6 @@ export default function CustomerOrdersPage() {
                   {money(cancelTarget.totalPrice)}
                 </span>
               </div>
-              {cancelOrder.isError && cancelOrder.error && (
-                <p className="text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2">
-                  ⚠️ {cancelOrder.error.message}
-                </p>
-              )}
             </div>
 
             <div className="flex gap-3 px-6 py-4 bg-slate-50 border-t border-slate-100">

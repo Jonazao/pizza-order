@@ -29,13 +29,13 @@ export default function Home() {
 
             <div className="pt-4 flex flex-wrap items-center gap-4">
               <Link
-                href="#builder"
+                href="/pizza-builder"
                 className="px-7 py-3.5 rounded-full bg-orange-600 hover:bg-orange-500 text-white text-base font-bold shadow-lg shadow-orange-600/30 transition transform hover:-translate-y-0.5 cursor-pointer"
               >
                 Start Pizza Builder 🍕
               </Link>
               <Link
-                href="#specialties"
+                href="/catalog"
                 className="px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 text-base font-semibold backdrop-blur-md transition cursor-pointer"
               >
                 Explore Menu

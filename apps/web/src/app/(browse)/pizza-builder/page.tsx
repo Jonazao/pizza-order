@@ -2,14 +2,18 @@
 
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { getCatalogItems, CatalogItem } from '@/lib/api/catalog';
 import { useAuth } from '@/lib/auth/auth-context';
 import { createCustomPizza, getCustomPizzas } from '@/lib/api/custom-pizza';
+import { useSnackbar } from '@/components/snackbar/snackbar';
 import Link from 'next/link';
 
 export default function PizzaBuilderPage() {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { user, isLoading: authLoading } = useAuth();
+  const snackbar = useSnackbar();
 
   // Data queries
   const catalogQuery = useQuery({
@@ -32,7 +36,6 @@ export default function PizzaBuilderPage() {
     },
   });
 
-  const [error, setError] = useState<string | null>(null);
   const catalogError = catalogQuery.isError && catalogQuery.error instanceof Error
     ? catalogQuery.error.message
     : null;
@@ -44,9 +47,6 @@ export default function PizzaBuilderPage() {
   const [selectedBase, setSelectedBase] = useState<CatalogItem | null>(null);
   const [selectedToppings, setSelectedToppings] = useState<CatalogItem[]>([]);
   const [pizzaName, setPizzaName] = useState<string>('');
-
-  // Submit states
-  const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
 
   // Filter catalog items by category
   const crusts = catalog.filter((item) => item.category === 'Crust');
@@ -86,18 +86,16 @@ export default function PizzaBuilderPage() {
 
   const handleSavePizza = async () => {
     if (!user) {
-      setError('You must be logged in to save custom pizzas.');
+      snackbar.error('You must be logged in to save custom pizzas.');
       return;
     }
     if (!selectedCrust || !selectedSauce || !selectedBase || !pizzaName.trim()) {
-      setError('Please complete all steps and specify a pizza name.');
+      snackbar.error('Please complete all steps and specify a pizza name.');
       return;
     }
 
-    setError(null);
-
     try {
-      await savePizzaMutation.mutateAsync({
+      const saved = await savePizzaMutation.mutateAsync({
         name: pizzaName,
         crustId: selectedCrust.id,
         sauceId: selectedSauce.id,
@@ -105,17 +103,10 @@ export default function PizzaBuilderPage() {
         toppings: selectedToppings.map((t) => t.id),
       });
 
-      setSubmitSuccess(true);
-
-      // Reset wizard
-      setSelectedCrust(null);
-      setSelectedSauce(null);
-      setSelectedBase(null);
-      setSelectedToppings([]);
-      setPizzaName('');
-      setCurrentStep(1);
+      snackbar.success(`✨ "${saved.name}" saved successfully! Redirecting to ordering...`);
+      router.push('/customer/ordering');
     } catch (err: any) {
-      setError(err.message || 'Failed to save your custom pizza.');
+      snackbar.error(err.message || 'Failed to save your custom pizza.');
     }
   };
 
@@ -188,14 +179,7 @@ export default function PizzaBuilderPage() {
             </div>
           </div>
 
-          {/* Banner notification for success or guest warning */}
-          {submitSuccess && (
-            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between">
-              <span className="text-xs font-medium">✨ Custom pizza saved successfully! Check it out in your creations.</span>
-              <button onClick={() => setSubmitSuccess(false)} className="text-xs font-bold hover:underline cursor-pointer">Dismiss</button>
-            </div>
-          )}
-
+          {/* Guest warning banner */}
           {!user && !authLoading && (
             <div className="p-5 rounded-2xl bg-orange-50 border border-orange-200 text-orange-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="space-y-1">
@@ -213,9 +197,9 @@ export default function PizzaBuilderPage() {
             </div>
           )}
 
-          {(catalogError || error) && (
+          {catalogError && (
             <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium">
-              ⚠️ {catalogError || error}
+              ⚠️ {catalogError}
             </div>
           )}
 
@@ -413,13 +397,22 @@ export default function PizzaBuilderPage() {
                             <span className="text-slate-500 font-medium">Base Cheese</span>
                             <span className="text-slate-900 font-semibold">{selectedBase?.title}</span>
                           </div>
-                          <div className="flex justify-between pt-2.5">
-                            <span className="text-slate-500 font-medium">Toppings ({selectedToppings.length})</span>
-                            <span className="text-slate-900 font-semibold text-right max-w-[200px] truncate">
-                              {selectedToppings.length > 0
-                                ? selectedToppings.map((t) => t.title).join(', ')
-                                : 'No toppings selected'}
-                            </span>
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 pt-2.5">
+                            <span className="text-slate-500 font-medium shrink-0">Toppings ({selectedToppings.length})</span>
+                            <div className="flex flex-wrap gap-1.5 justify-end">
+                              {selectedToppings.length > 0 ? (
+                                selectedToppings.map((t) => (
+                                  <span
+                                    key={t.id}
+                                    className="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10px] font-semibold whitespace-nowrap"
+                                  >
+                                    {t.title}
+                                  </span>
+                                ))
+                              ) : (
+                                <span className="text-slate-400 font-light">No toppings selected</span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
