@@ -15,6 +15,14 @@
       "status": "Completed",
       "created_at": "2026-08-09T08:52:23Z",
       "updated_at": "2026-08-09T21:38:30Z"
+    },
+    {
+      "id": "pizza-order",
+      "name": "Pizza Order Flow",
+      "title": "The app should be able to generate a pizza order containing one or multiple pizzas with state transitions, ordering pages, and custom pizza pagination.",
+      "status": "Completed",
+      "created_at": "2026-08-10T00:03:00Z",
+      "updated_at": "2026-08-10T02:58:20Z"
     }
   ]
 }

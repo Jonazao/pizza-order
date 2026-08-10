@@ -27,12 +27,21 @@ export = {
         createdAt: now,
         updatedAt: now,
       },
+      {
+        id: '44444444-4444-4444-4444-444444444444',
+        name: 'Maria Customer',
+        email: 'customer2@example.com',
+        password: customerPassword,
+        role: 'Customer',
+        createdAt: now,
+        updatedAt: now,
+      },
     ]);
   },
 
   down: async (queryInterface: QueryInterface) => {
     await queryInterface.bulkDelete('users', {
-      email: ['customer@example.com', 'employee@example.com'],
+      email: ['customer@example.com', 'employee@example.com', 'customer2@example.com'],
     });
   },
 };

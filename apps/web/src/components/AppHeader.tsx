@@ -3,9 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { HeaderAuth } from './HeaderAuth';
+import { useAuth } from '@/lib/auth/auth-context';
 
 export function AppHeader() {
   const pathname = usePathname();
+  const { user } = useAuth();
+
+  const navLinkClass = (href: string) =>
+    `transition hover:text-emerald-700 ${pathname === href ? 'text-emerald-700 font-semibold' : ''}`;
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80">
@@ -25,25 +30,23 @@ export function AppHeader() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
-          <Link
-            href="/catalog"
-            className={`transition hover:text-emerald-700 ${pathname === '/catalog' ? 'text-emerald-700 font-semibold' : ''
-              }`}
-          >
+          <Link href="/catalog" className={navLinkClass('/catalog')}>
             Pizza Catalog
           </Link>
-          <Link
-            href="/pizza-builder"
-            className={`transition hover:text-emerald-700 ${pathname === '/pizza-builder' ? 'text-emerald-700 font-semibold' : ''
-              }`}
-          >
+          <Link href="/pizza-builder" className={navLinkClass('/pizza-builder')}>
             Pizza Builder
           </Link>
-          <Link
-            href="/developer"
-            className={`transition hover:text-emerald-700 ${pathname === '/developer' ? 'text-emerald-700 font-semibold' : ''
-              }`}
-          >
+          {user?.role === 'Customer' && (
+            <Link href="/ordering" className={navLinkClass('/ordering')}>
+              Ordering
+            </Link>
+          )}
+          {user && (
+            <Link href="/orders" className={navLinkClass('/orders')}>
+              Orders
+            </Link>
+          )}
+          <Link href="/developer" className={navLinkClass('/developer')}>
             Developer Portal
           </Link>
         </nav>

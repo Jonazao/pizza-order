@@ -37,6 +37,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const [token, setToken] = useState<string | null>(() => readToken());
 
+  // SSR renders with no token (localStorage is unavailable), so the initial client
+  // render must match that neutral state until the component has mounted to avoid
+  // hydration mismatches in components that branch on auth state.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const profileQuery = useQuery<UserProfile | null, Error>({
     queryKey: PROFILE_QUERY_KEY,
     queryFn: getProfile,
@@ -76,14 +82,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<AuthContextValue>(
     () => ({
-      user: token ? (profileQuery.data ?? null) : null,
-      isLoading: !!token && profileQuery.isLoading,
-      isAuthenticated: !!token && !!profileQuery.data,
+      user: mounted && token ? (profileQuery.data ?? null) : null,
+      isLoading: !mounted || (!!token && profileQuery.isLoading),
+      isAuthenticated: mounted && !!token && !!profileQuery.data,
       login,
       register,
       logout,
     }),
-    [token, profileQuery.data, profileQuery.isLoading, login, register, logout]
+    [mounted, token, profileQuery.data, profileQuery.isLoading, login, register, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

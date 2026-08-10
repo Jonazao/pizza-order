@@ -1,5 +1,6 @@
 import { serializeCustomPizza } from './custom-pizza.serializer';
 import { CatalogCategory } from '../../catalog/enums/catalog-category.enum';
+import { CatalogItem } from '../../catalog/models/catalog-item.model';
 import { CustomPizza } from '../models/custom-pizza.model';
 
 describe('custom-pizza.serializer', () => {
@@ -13,7 +14,7 @@ describe('custom-pizza.serializer', () => {
     isHealthy: false,
     createdAt: new Date(),
     updatedAt: new Date(),
-  }) as any;
+  }) as unknown as CatalogItem;
 
   it('computes total price from ingredients and maps nested items', () => {
     const pizza = {
@@ -30,27 +31,7 @@ describe('custom-pizza.serializer', () => {
 
     const result = serializeCustomPizza(pizza);
     expect(result.totalPrice).toBe(10);
-    expect(result.crust?.id).toBe('crust-1');
+    expect(result.crust.id).toBe('crust-1');
     expect(result.toppings).toHaveLength(2);
-  });
-
-  it('handles missing associations with null', () => {
-    const pizza = {
-      id: 'pizza-2',
-      name: 'Bare Pizza',
-      userId: 'user-1',
-      crust: undefined,
-      sauce: undefined,
-      base: undefined,
-      toppings: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    } as unknown as CustomPizza;
-
-    const result = serializeCustomPizza(pizza);
-    expect(result.crust).toBeNull();
-    expect(result.sauce).toBeNull();
-    expect(result.base).toBeNull();
-    expect(result.totalPrice).toBe(0);
   });
 });

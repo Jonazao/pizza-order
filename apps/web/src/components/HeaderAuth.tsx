@@ -27,6 +27,14 @@ export function HeaderAuth() {
             {user.role}
           </span>
         </div>
+        {user.role === 'Customer' && (
+          <Link
+            href="/ordering"
+            className="px-4 py-1.5 text-xs font-bold rounded-full bg-orange-600 hover:bg-orange-700 text-white shadow-md shadow-orange-600/20 transition cursor-pointer"
+          >
+            Order Now
+          </Link>
+        )}
         <button
           onClick={handleLogout}
           className="px-3.5 py-1.5 text-xs font-semibold rounded-full bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-700 border border-slate-200 hover:border-red-200 transition duration-200 cursor-pointer"

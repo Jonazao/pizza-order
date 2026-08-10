@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
 import { CatalogModule } from './catalog/catalog.module';
 import { CustomPizzaModule } from './custom-pizza/custom-pizza.module';
+import { OrderModule } from './order/order.module';
 import { HttpExceptionFilter } from './common';
 import { validate } from './config/env.validation';
 
@@ -28,6 +29,7 @@ import { validate } from './config/env.validation';
     HealthModule,
     CatalogModule,
     CustomPizzaModule,
+    OrderModule,
   ],
   providers: [
     {

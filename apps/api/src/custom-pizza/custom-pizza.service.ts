@@ -1,11 +1,21 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
+import { Op } from 'sequelize';
 import { CustomPizza } from './models/custom-pizza.model';
 import { CustomPizzaTopping } from './models/custom-pizza-topping.model';
 import { CatalogItem, CatalogCategory } from '../catalog/models/catalog-item.model';
 import { CreateCustomPizzaDto } from './dto/create-custom-pizza.dto';
+import { FindCustomPizzasQueryDto } from './dto/find-custom-pizzas-query.dto';
+import { CustomPizzaResponseDto } from './dto/custom-pizza-response.dto';
 import { serializeCustomPizza } from './serializers/custom-pizza.serializer';
+
+export interface PaginatedCustomPizzasResponse {
+  items: CustomPizzaResponseDto[];
+  total: number;
+  page: number;
+  limit: number;
+}
 
 @Injectable()
 export class CustomPizzaService {
@@ -128,24 +138,74 @@ export class CustomPizzaService {
   }
 
   /**
-   * Find all custom pizzas for a user, using RLS context at the database level.
+   * Find all custom pizzas for a user with pagination, search, and sorting, using RLS context.
    */
-  async findAll(userId: string) {
+  async findAll(
+    userId: string,
+    query: FindCustomPizzasQueryDto = {},
+  ): Promise<PaginatedCustomPizzasResponse> {
+    const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC', search } = query;
+
+    const where: any = { userId };
+    if (search && search.trim()) {
+      where.name = { [Op.iLike]: `%${search.trim()}%` };
+    }
+
     const transaction = await this.sequelize.transaction();
     try {
       // Set RLS parameter first
       await this.setRlsContext(userId, transaction);
 
-      // Query custom pizzas
-      const pizzas = await this.customPizzaModel.findAll({
-        where: { userId }, // Added service filter alongside RLS for defense-in-depth
+      const { rows, count } = await this.customPizzaModel.findAndCountAll({
+        where,
         include: [
           { model: CatalogItem, as: 'crust' },
           { model: CatalogItem, as: 'sauce' },
           { model: CatalogItem, as: 'base' },
           { model: CatalogItem, as: 'toppings', through: { attributes: [] } },
         ],
-        order: [['createdAt', 'DESC']],
+        distinct: true, // toppings many-to-many join would otherwise inflate the count
+        order: [[sortBy, sortOrder]],
+        limit,
+        offset: (page - 1) * limit,
+        transaction,
+      });
+
+      await transaction.commit();
+
+      return {
+        items: rows.map(serializeCustomPizza),
+        total: count,
+        page,
+        limit,
+      };
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  }
+
+  /**
+   * Find specific custom pizzas that belong to the user, using RLS context.
+   * Used by the order flow to snapshot server-computed pricing.
+   */
+  async findByIds(userId: string, ids: string[]): Promise<CustomPizzaResponseDto[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const transaction = await this.sequelize.transaction();
+    try {
+      await this.setRlsContext(userId, transaction);
+
+      const pizzas = await this.customPizzaModel.findAll({
+        where: { id: { [Op.in]: ids }, userId },
+        include: [
+          { model: CatalogItem, as: 'crust' },
+          { model: CatalogItem, as: 'sauce' },
+          { model: CatalogItem, as: 'base' },
+          { model: CatalogItem, as: 'toppings', through: { attributes: [] } },
+        ],
         transaction,
       });
 

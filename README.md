@@ -60,11 +60,12 @@ npm run down:clean
 
 ## Demo Accounts (Pre-Seeded)
 
-The database includes two pre-configured demo user accounts created via `npm run db:seed`:
+The database includes three pre-configured demo user accounts created via `npm run db:seed`:
 
 | Role | Email | Password | Description |
 | :--- | :--- | :--- | :--- |
 | **Customer** | `customer@example.com` | `Customer123!` | Customer role for pizza ordering & account management |
+| **Customer** | `customer2@example.com` | `Customer123!` | Second customer for testing unique per-user ordering history |
 | **Employee** | `employee@example.com` | `Employee123!` | Employee role for kitchen & order fulfillment management |
 
 You can log in using either credential set on the Web Client ([http://localhost:3001/login](http://localhost:3001/login)) or directly via the API authentication endpoints.

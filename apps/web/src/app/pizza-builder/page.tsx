@@ -21,10 +21,10 @@ export default function PizzaBuilderPage() {
 
   const savedPizzasQuery = useQuery({
     queryKey: ['custom-pizzas'],
-    queryFn: getCustomPizzas,
+    queryFn: () => getCustomPizzas({ limit: 50 }),
     enabled: !!user,
   });
-  const savedPizzas = savedPizzasQuery.data ?? [];
+  const savedPizzas = savedPizzasQuery.data?.items ?? [];
 
   const savePizzaMutation = useMutation({
     mutationFn: createCustomPizza,

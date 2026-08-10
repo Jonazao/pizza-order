@@ -1,10 +1,8 @@
 import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
 import { Session } from './session.model';
+import { UserRole } from '../../common/enums/user-role.enum';
 
-export enum UserRole {
-  CUSTOMER = 'Customer',
-  EMPLOYEE = 'Employee',
-}
+export { UserRole };
 
 export interface UserAttributes {
   id?: string;

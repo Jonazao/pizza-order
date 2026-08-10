@@ -23,23 +23,20 @@ export class CustomPizzaResponseDto {
   @ApiProperty({
     description: 'Selected crust catalog item',
     type: CatalogItemResponseDto,
-    nullable: true,
   })
-  crust!: CatalogItemResponseDto | null;
+  crust!: CatalogItemResponseDto;
 
   @ApiProperty({
     description: 'Selected sauce catalog item',
     type: CatalogItemResponseDto,
-    nullable: true,
   })
-  sauce!: CatalogItemResponseDto | null;
+  sauce!: CatalogItemResponseDto;
 
   @ApiProperty({
     description: 'Selected base catalog item',
     type: CatalogItemResponseDto,
-    nullable: true,
   })
-  base!: CatalogItemResponseDto | null;
+  base!: CatalogItemResponseDto;
 
   @ApiProperty({
     description: 'Selected toppings catalog items',
