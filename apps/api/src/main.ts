@@ -1,11 +1,13 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { ValidationPipe, ClassSerializerInterceptor, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
   // Enable graceful shutdown lifecycle hooks
   app.enableShutdownHooks();
@@ -14,7 +16,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   // CORS Configuration
-  const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3001';
+  const corsOrigin = configService.get<string>('CORS_ORIGIN', 'http://localhost:3001');
   app.enableCors({
     origin: corsOrigin,
     credentials: true,
@@ -41,7 +43,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  const port = process.env.PORT || 3000;
+  const port = configService.get<number>('PORT', 3000);
   await app.listen(port, '0.0.0.0');
   logger.log(`Application is running on: http://localhost:${port}/api`);
   logger.log(`Swagger documentation is available at: http://localhost:${port}/api/docs`);

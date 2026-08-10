@@ -22,8 +22,8 @@ export default function RegisterPage() {
     try {
       await register(email, password, name);
       router.push('/');
-    } catch (err: any) {
-      setError(err.message || 'Registration failed. Please check inputs.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Registration failed. Please check inputs.');
     } finally {
       setSubmitting(false);
     }

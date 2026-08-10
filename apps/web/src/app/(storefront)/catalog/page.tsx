@@ -20,8 +20,8 @@ export default function CatalogPage() {
         const data = await getCatalogItems();
         setItems(data);
         setFilteredItems(data);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch catalog items');
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch catalog items');
       } finally {
         setLoading(false);
       }

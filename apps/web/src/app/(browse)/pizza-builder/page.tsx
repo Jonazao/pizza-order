@@ -105,8 +105,8 @@ export default function PizzaBuilderPage() {
 
       snackbar.success(`✨ "${saved.name}" saved successfully! Redirecting to ordering...`);
       router.push('/customer/ordering');
-    } catch (err: any) {
-      snackbar.error(err.message || 'Failed to save your custom pizza.');
+    } catch (err: unknown) {
+      snackbar.error(err instanceof Error ? err.message : 'Failed to save your custom pizza.');
     }
   };
 

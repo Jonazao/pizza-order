@@ -105,6 +105,65 @@ You can log in using either credential set on the Web Client ([http://localhost:
 
 ---
 
+## Data Model Overview
+
+The schema is managed exclusively through migrations (`apps/api/database/migrations`) and uses PostgreSQL. Row-level security is enabled on the tables that hold user-owned data (`custom_pizzas`, `custom_pizza_toppings`, `orders`).
+
+```
+┌──────────┐  1   N ┌──────────┐
+│   User   │────────│  Session │  (token used for JWT revocation)
+└──────────┘        └──────────┘
+     │ 1
+     │ N
+     ├───────────────┐
+     │               │
+┌────▼────────────┐  │            ┌──────────────────┐
+│  CustomPizza    │  │    N       │   CatalogItem    │
+│ (user's build)  │  │────────────│ (Crust / Sauce / │
+└─────────────────┘  │  belongsTo │  Base / Toppings)│
+     │ M            │            └──────────────────┘
+     │ N            1 │
+┌────▼────────────────┐
+│ CustomPizzaTopping  │  (junction: CustomPizza <-> CatalogItem)
+└─────────────────────┘
+     │ 1
+     │ N
+┌────▼────┐  N     1 ┌──────────┐
+│  Order  │──────────│   User   │  (owner of the order)
+└─────────┘          └──────────┘
+```
+
+### Entities
+
+| Entity | Purpose | Key fields |
+| :--- | :--- | :--- |
+| `User` | A customer or employee account. | `name`, `email` (unique), `password` (bcrypt hash), `role` (`Customer` \| `Employee`) |
+| `Session` | Server-side record backing a JWT so it can be invalidated on logout. | `token`, `expiresAt`, `userId` FK |
+| `CatalogItem` | An available ingredient with a fixed price. | `title`, `description`, `price`, `category` (`Crust` \| `Sauce` \| `Base` \| `Toppings`), `isVegan`, `isHealthy` |
+| `CustomPizza` | A user's saved custom pizza. | `name`, `userId` FK, `crustId`/`sauceId`/`baseId` FKs |
+| `CustomPizzaTopping` | Many-to-many junction between a custom pizza and its toppings. | `customPizzaId` FK, `catalogItemId` FK |
+| `Order` | A placed order with a snapshot of its line items. | `userId` FK, `status` (`Pending` \| `Preparing` \| `Ready` \| `Delivered`), `pizzas` (JSONB snapshot), `totalPrice` |
+
+### Pricing
+
+- A custom pizza's price is **computed server-side** as `crust + sauce + base + toppings` from the live catalog.
+- An order's `totalPrice` is the sum of all line-item totals (`unitPrice × quantity`), also computed server-side and stored as an immutable JSONB snapshot so the order is unaffected by later catalog price changes.
+
+---
+
+## Notable Design Decisions
+
+- **Row-Level Security (RLS) for ownership.** `custom_pizzas`, `custom_pizza_toppings`, and `orders` enable PostgreSQL RLS. Every request inside a transaction sets `app.current_user_id` / `app.current_user_role` via `set_config` (`src/common/helpers/rls.helper.ts`), so the database itself enforces that users only see/act on their own rows. This is layered with service-level checks (e.g. `CustomPizzaService.findByIds` scoped by `userId`, order cancel scoped by owner) and role guards.
+- **Server-side pricing with order snapshots.** Clients never send prices. At order creation the API recomputes each pizza's price from the catalog, snapshots ingredients + unit prices into JSONB, and computes the total. Later catalog changes therefore never mutate historical orders.
+- **Strict single-step status transitions.** `pending -> preparing -> ready -> delivered` is enforced via a transition map (`src/order/constants/order-status-transitions.ts`). Updates are atomic (`UPDATE ... WHERE status = current`) so concurrent double-advances are rejected with a `409`.
+- **Cancel only while pending.** Customers may cancel their own orders exclusively in the `Pending` state; the DELETE is scoped by both `id` and `userId` and guarded against concurrent state changes.
+- **Server-side sessions for JWT revocation.** JWT expiry is short-lived by default and every issued token is recorded in `sessions`; the JWT strategy verifies the token exists server-side, so `logout` genuinely invalidates a session.
+- **Migration-only schema.** Sequelize `synchronize: false`; all schema changes live as versioned TypeScript migrations compiled and run via Sequelize CLI.
+- **Role separation.** Customer endpoints (create/history/cancel orders, custom pizzas) and Employee endpoints (order queue, status transitions) are guarded by a `RolesGuard` on top of authentication.
+- **E2E with an auto-provisioned database.** The e2e suite (`apps/api/test/pizza-order.e2e-spec.ts`) creates a dedicated `pizza_test` database, runs migrations + seeders, and refuses to run against the dev database.
+
+---
+
 ## Workspace Script Reference
 
 Run these commands from the root directory:
