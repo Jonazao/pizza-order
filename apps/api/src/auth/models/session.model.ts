@@ -1,14 +1,6 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { User } from './user.model';
-
-export interface SessionAttributes {
-  id?: string;
-  userId: string;
-  token: string;
-  expiresAt: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import { SessionAttributes } from '../interfaces/auth.interface';
 
 @Table({ tableName: 'sessions', timestamps: true })
 export class Session extends Model<Session, SessionAttributes> {

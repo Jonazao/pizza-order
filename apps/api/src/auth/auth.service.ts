@@ -3,10 +3,13 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/sequelize';
 import * as bcrypt from 'bcryptjs';
-import { User, UserRole, Session } from './models';
+import { User, Session } from './models';
+import { UserRole } from '../common/enums/user-role.enum';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { serializeUser } from './serializers/user.serializer';
+import { toJwtPayload } from './helpers/jwt-payload.helper';
+import { AuthResponse, LogoutResponse } from './interfaces/auth.interface';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +22,7 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) { }
 
-  async register(dto: RegisterDto) {
+  async register(dto: RegisterDto): Promise<AuthResponse> {
     const existingUser = await this.userModel.findOne({
       where: { email: dto.email.toLowerCase() },
     });
@@ -36,8 +39,7 @@ export class AuthService {
       role: UserRole.CUSTOMER,
     });
 
-    const payload = { sub: user.id, email: user.email, name: user.name, role: user.role };
-    const accessToken = this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(toJwtPayload(user));
 
     const expiresAt = this.getSessionExpirationDate();
     await this.sessionModel.create({
@@ -52,7 +54,7 @@ export class AuthService {
     };
   }
 
-  async login(dto: LoginDto) {
+  async login(dto: LoginDto): Promise<AuthResponse> {
     const user = await this.userModel.findOne({
       where: { email: dto.email.toLowerCase() },
     });
@@ -66,8 +68,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    const payload = { sub: user.id, email: user.email, name: user.name, role: user.role };
-    const accessToken = this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(toJwtPayload(user));
 
     const expiresAt = this.getSessionExpirationDate();
     await this.sessionModel.create({
@@ -82,7 +83,7 @@ export class AuthService {
     };
   }
 
-  async logout(token: string) {
+  async logout(token: string | null): Promise<LogoutResponse> {
     if (token) {
       await this.sessionModel.destroy({
         where: { token },
@@ -93,6 +94,6 @@ export class AuthService {
 
   private getSessionExpirationDate(): Date {
     const ttlMs = this.configService.get<number>('SESSION_EXPIRES_IN_MS') || 24 * 60 * 60 * 1000;
-    return new Date(Date.now() + Number(ttlMs));
+    return new Date(Date.now() + ttlMs);
   }
 }

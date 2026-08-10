@@ -2,17 +2,7 @@ import { Table, Column, Model, DataType, ForeignKey, BelongsTo, BelongsToMany } 
 import { User } from '../../auth/models/user.model';
 import { CatalogItem } from '../../catalog/models/catalog-item.model';
 import { CustomPizzaTopping } from './custom-pizza-topping.model';
-
-export interface CustomPizzaAttributes {
-  id?: string;
-  name: string;
-  userId: string;
-  crustId: string;
-  sauceId: string;
-  baseId: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import { CustomPizzaAttributes } from '../interfaces/custom-pizza.interface';
 
 @Table({ tableName: 'custom_pizzas', timestamps: true })
 export class CustomPizza extends Model<CustomPizza, CustomPizzaAttributes> {

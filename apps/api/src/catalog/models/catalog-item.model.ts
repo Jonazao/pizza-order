@@ -53,4 +53,3 @@ export class CatalogItem extends Model<CatalogItem, CatalogItemAttributes> {
   })
   isHealthy!: boolean;
 }
-export { CatalogCategory };

@@ -1,18 +1,7 @@
 import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
 import { Session } from './session.model';
 import { UserRole } from '../../common/enums/user-role.enum';
-
-export { UserRole };
-
-export interface UserAttributes {
-  id?: string;
-  name: string;
-  email: string;
-  password: string;
-  role?: UserRole;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import { UserAttributes } from '../interfaces/auth.interface';
 
 @Table({ tableName: 'users', timestamps: true })
 export class User extends Model<User, UserAttributes> {

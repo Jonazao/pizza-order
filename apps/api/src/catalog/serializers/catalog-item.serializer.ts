@@ -6,7 +6,7 @@ export function serializeCatalogItem(item: CatalogItem): CatalogItemResponseDto 
     id: item.id,
     title: item.title,
     description: item.description,
-    price: typeof item.price === 'string' ? parseFloat(item.price) : item.price,
+    price: item.price,
     category: item.category,
     isVegan: item.isVegan,
     isHealthy: item.isHealthy,

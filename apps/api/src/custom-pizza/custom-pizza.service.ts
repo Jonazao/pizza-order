@@ -1,21 +1,16 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
-import { Op } from 'sequelize';
+import { Op, WhereOptions } from 'sequelize';
 import { CustomPizza } from './models/custom-pizza.model';
-import { CustomPizzaTopping } from './models/custom-pizza-topping.model';
-import { CatalogItem, CatalogCategory } from '../catalog/models/catalog-item.model';
+import { CatalogItem } from '../catalog/models/catalog-item.model';
+import { CatalogCategory } from '../catalog/enums/catalog-category.enum';
 import { CreateCustomPizzaDto } from './dto/create-custom-pizza.dto';
 import { FindCustomPizzasQueryDto } from './dto/find-custom-pizzas-query.dto';
 import { CustomPizzaResponseDto } from './dto/custom-pizza-response.dto';
 import { serializeCustomPizza } from './serializers/custom-pizza.serializer';
-
-export interface PaginatedCustomPizzasResponse {
-  items: CustomPizzaResponseDto[];
-  total: number;
-  page: number;
-  limit: number;
-}
+import { PaginatedCustomPizzasResponse } from './interfaces';
+import { setRlsContext } from '../common/helpers/rls.helper';
 
 @Injectable()
 export class CustomPizzaService {
@@ -28,22 +23,9 @@ export class CustomPizzaService {
   ) { }
 
   /**
-   * Helper to set current user ID configuration context in a transaction for PostgreSQL RLS.
-   */
-  private async setRlsContext(userId: string, transaction: any): Promise<void> {
-    await this.sequelize.query(
-      `SELECT set_config('app.current_user_id', :userId, true);`,
-      {
-        replacements: { userId },
-        transaction,
-      }
-    );
-  }
-
-  /**
    * Create a new custom pizza for a user, using RLS context at the database level.
    */
-  async create(userId: string, dto: CreateCustomPizzaDto) {
+  async create(userId: string, dto: CreateCustomPizzaDto): Promise<CustomPizzaResponseDto> {
     // 1. Validate ingredient categories at service level
     const crust = await this.catalogItemModel.findByPk(dto.crustId);
     if (!crust || crust.category !== CatalogCategory.CRUST) {
@@ -80,13 +62,11 @@ export class CustomPizzaService {
       }
     }
 
-    // 2. Perform DB operations inside an RLS-enforced transaction
+    // 2. Persist the pizza and its toppings inside an RLS-enforced transaction
     const transaction = await this.sequelize.transaction();
     try {
-      // Set RLS parameter first
-      await this.setRlsContext(userId, transaction);
+      await setRlsContext(this.sequelize, userId, transaction);
 
-      // Create Custom Pizza record
       const customPizza = await this.customPizzaModel.create(
         {
           name: dto.name,
@@ -98,39 +78,26 @@ export class CustomPizzaService {
         { transaction }
       );
 
-      // Link toppings if any
       if (toppings.length > 0) {
         await customPizza.$set('toppings', toppings, { transaction });
       }
 
-      // Commit transaction
-      await transaction.commit();
+      const savedPizza = await this.customPizzaModel.findByPk(customPizza.id, {
+        include: [
+          { model: CatalogItem, as: 'crust' },
+          { model: CatalogItem, as: 'sauce' },
+          { model: CatalogItem, as: 'base' },
+          { model: CatalogItem, as: 'toppings', through: { attributes: [] } },
+        ],
+        transaction,
+      });
 
-      // Fetch the complete pizza with its associations
-      // Create a fresh read transaction for RLS consistency
-      const readTransaction = await this.sequelize.transaction();
-      try {
-        await this.setRlsContext(userId, readTransaction);
-        const savedPizza = await this.customPizzaModel.findByPk(customPizza.id, {
-          include: [
-            { model: CatalogItem, as: 'crust' },
-            { model: CatalogItem, as: 'sauce' },
-            { model: CatalogItem, as: 'base' },
-            { model: CatalogItem, as: 'toppings', through: { attributes: [] } },
-          ],
-          transaction: readTransaction,
-        });
-        await readTransaction.commit();
-
-        if (!savedPizza) {
-          throw new NotFoundException('Saved pizza not found');
-        }
-
-        return serializeCustomPizza(savedPizza);
-      } catch (err) {
-        await readTransaction.rollback();
-        throw err;
+      if (!savedPizza) {
+        throw new NotFoundException('Saved pizza not found');
       }
+
+      await transaction.commit();
+      return serializeCustomPizza(savedPizza);
     } catch (error) {
       await transaction.rollback();
       throw error;
@@ -145,16 +112,15 @@ export class CustomPizzaService {
     query: FindCustomPizzasQueryDto = {},
   ): Promise<PaginatedCustomPizzasResponse> {
     const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC', search } = query;
+    const searchTerm = search?.trim();
 
-    const where: any = { userId };
-    if (search && search.trim()) {
-      where.name = { [Op.iLike]: `%${search.trim()}%` };
-    }
+    const where: WhereOptions<CustomPizza> = searchTerm
+      ? { userId, name: { [Op.iLike]: `%${searchTerm}%` } }
+      : { userId };
 
     const transaction = await this.sequelize.transaction();
     try {
-      // Set RLS parameter first
-      await this.setRlsContext(userId, transaction);
+      await setRlsContext(this.sequelize, userId, transaction);
 
       const { rows, count } = await this.customPizzaModel.findAndCountAll({
         where,
@@ -196,7 +162,7 @@ export class CustomPizzaService {
 
     const transaction = await this.sequelize.transaction();
     try {
-      await this.setRlsContext(userId, transaction);
+      await setRlsContext(this.sequelize, userId, transaction);
 
       const pizzas = await this.customPizzaModel.findAll({
         where: { id: { [Op.in]: ids }, userId },

@@ -1,4 +1,5 @@
-import { User, UserRole } from '../models/user.model';
+import { User } from '../models/user.model';
+import { UserRole } from '../../common/enums/user-role.enum';
 
 export interface SerializedUser {
   id: string;

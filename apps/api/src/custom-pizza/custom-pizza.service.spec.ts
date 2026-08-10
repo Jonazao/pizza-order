@@ -6,12 +6,34 @@ import { CustomPizzaService } from './custom-pizza.service';
 import { CustomPizza } from './models/custom-pizza.model';
 import { CatalogItem } from '../catalog/models/catalog-item.model';
 
+interface MockTransaction {
+  commit: jest.Mock<Promise<void>>;
+  rollback: jest.Mock<Promise<void>>;
+}
+
+interface MockSequelize {
+  query: jest.Mock<Promise<unknown[]>>;
+  transaction: jest.Mock<Promise<MockTransaction>>;
+}
+
+interface MockCustomPizzaModel {
+  create: jest.Mock;
+  findByPk: jest.Mock;
+  findAll: jest.Mock;
+  findAndCountAll: jest.Mock;
+}
+
+interface MockCatalogItemModel {
+  findByPk: jest.Mock;
+  findAll: jest.Mock;
+}
+
 describe('CustomPizzaService', () => {
   let service: CustomPizzaService;
-  let mockTransaction: { commit: jest.Mock; rollback: jest.Mock };
-  let mockSequelize: any;
-  let mockCustomPizzaModel: any;
-  let mockCatalogItemModel: any;
+  let mockTransaction: MockTransaction;
+  let mockSequelize: MockSequelize;
+  let mockCustomPizzaModel: MockCustomPizzaModel;
+  let mockCatalogItemModel: MockCatalogItemModel;
 
   const pizzaRow = (id: string, name: string) => ({
     id,
@@ -32,6 +54,8 @@ describe('CustomPizzaService', () => {
       transaction: jest.fn().mockResolvedValue(mockTransaction),
     };
     mockCustomPizzaModel = {
+      create: jest.fn(),
+      findByPk: jest.fn(),
       findAndCountAll: jest.fn(),
       findAll: jest.fn(),
     };
@@ -43,9 +67,9 @@ describe('CustomPizzaService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CustomPizzaService,
-        { provide: Sequelize, useValue: mockSequelize },
-        { provide: getModelToken(CustomPizza), useValue: mockCustomPizzaModel },
-        { provide: getModelToken(CatalogItem), useValue: mockCatalogItemModel },
+        { provide: Sequelize, useValue: mockSequelize as unknown as Sequelize },
+        { provide: getModelToken(CustomPizza), useValue: mockCustomPizzaModel as unknown as typeof CustomPizza },
+        { provide: getModelToken(CatalogItem), useValue: mockCatalogItemModel as unknown as typeof CatalogItem },
       ],
     }).compile();
 

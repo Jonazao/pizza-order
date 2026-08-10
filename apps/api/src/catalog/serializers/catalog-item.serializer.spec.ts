@@ -1,5 +1,6 @@
 import { serializeCatalogItem } from './catalog-item.serializer';
 import { CatalogCategory } from '../enums/catalog-category.enum';
+import { CatalogItem } from '../models/catalog-item.model';
 
 describe('catalog-item.serializer', () => {
   it('maps a CatalogItem model to its response DTO without exposing internals', () => {
@@ -7,13 +8,13 @@ describe('catalog-item.serializer', () => {
       id: 'item-1',
       title: 'Classic Crust',
       description: 'A classic crust',
-      price: '3.00',
+      price: 3,
       category: CatalogCategory.CRUST,
       isVegan: true,
       isHealthy: false,
       createdAt: new Date('2026-01-01T00:00:00Z'),
       updatedAt: new Date('2026-01-01T00:00:00Z'),
-    } as any;
+    } as unknown as CatalogItem;
 
     expect(serializeCatalogItem(item)).toEqual({
       id: 'item-1',

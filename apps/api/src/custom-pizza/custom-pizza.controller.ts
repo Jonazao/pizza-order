@@ -1,11 +1,13 @@
 import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser, CurrentUserEntity } from '../common/decorators/current-user.decorator';
+import { CurrentUser, CurrentUserEntity } from '../common';
 import { CustomPizzaService } from './custom-pizza.service';
 import { CreateCustomPizzaDto } from './dto/create-custom-pizza.dto';
 import { CustomPizzaResponseDto } from './dto/custom-pizza-response.dto';
 import { FindCustomPizzasQueryDto } from './dto/find-custom-pizzas-query.dto';
+import { PaginatedCustomPizzasResponseDto } from './dto/paginated-custom-pizzas-response.dto';
+import { PaginatedCustomPizzasResponse } from './interfaces';
 import { CUSTOM_PIZZA_ROUTES } from './routes';
 
 @ApiTags('Custom Pizza')
@@ -27,7 +29,7 @@ export class CustomPizzaController {
   async create(
     @CurrentUser() user: CurrentUserEntity,
     @Body() createCustomPizzaDto: CreateCustomPizzaDto,
-  ) {
+  ): Promise<CustomPizzaResponseDto> {
     return this.customPizzaService.create(user.id, createCustomPizzaDto);
   }
 
@@ -36,13 +38,13 @@ export class CustomPizzaController {
   @ApiResponse({
     status: 200,
     description: 'User custom pizzas retrieved successfully',
-    type: [CustomPizzaResponseDto],
+    type: PaginatedCustomPizzasResponseDto,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async findAll(
     @CurrentUser() user: CurrentUserEntity,
     @Query() query: FindCustomPizzasQueryDto,
-  ) {
+  ): Promise<PaginatedCustomPizzasResponse> {
     return this.customPizzaService.findAll(user.id, query);
   }
 }

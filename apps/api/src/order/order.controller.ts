@@ -3,8 +3,8 @@ import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@ne
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
-import { CurrentUser, CurrentUserEntity } from '../common/decorators/current-user.decorator';
-import { UserRole } from '../auth/models';
+import { CurrentUser, CurrentUserEntity } from '../common';
+import { UserRole } from '../common/enums/user-role.enum';
 import { OrderService } from './order.service';
 import { ORDER_ROUTES } from './routes';
 import { CreateOrderDto, FindEmployeeOrdersQueryDto, FindOrdersQueryDto, OrderResponseDto, UpdateOrderStatusDto } from './dto';

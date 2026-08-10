@@ -4,15 +4,9 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { InjectModel } from '@nestjs/sequelize';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
-import { User, UserRole, Session } from '../models';
-import { serializeUser } from '../serializers/user.serializer';
-
-export interface JwtPayload {
-  sub: string;
-  email: string;
-  name: string;
-  role: UserRole;
-}
+import { User, Session } from '../models';
+import { serializeUser, SerializedUser } from '../serializers/user.serializer';
+import { JwtPayload } from '../interfaces/auth.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -31,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(req: Request, payload: JwtPayload) {
+  async validate(req: Request, payload: JwtPayload): Promise<SerializedUser> {
     const rawToken = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
     if (!rawToken) {
       throw new UnauthorizedException('Missing authentication token');

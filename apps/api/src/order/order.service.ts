@@ -6,11 +6,11 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
-import { Op, Transaction, WhereOptions } from 'sequelize';
+import { Op, WhereOptions } from 'sequelize';
 import { isUUID } from 'class-validator';
 import { Order } from './models/order.model';
 import { User } from '../auth/models/user.model';
-import { UserRole } from '../auth/models';
+import { UserRole } from '../common/enums/user-role.enum';
 import { CustomPizzaService } from '../custom-pizza/custom-pizza.service';
 import {
   CreateOrderDto,
@@ -23,7 +23,8 @@ import {
 import { serializeOrder } from './serializers/order.serializer';
 import { OrderWhereOptions, PaginatedOrdersResponse } from './interfaces';
 import { canTransition } from './helpers/order-status.helper';
-import { round2 } from './helpers/money.helper';
+import { round2 } from '../common/helpers/money.helper';
+import { setRlsContext } from '../common/helpers/rls.helper';
 import { OrderStatus } from './enums/order-status.enum';
 
 @Injectable()
@@ -34,19 +35,6 @@ export class OrderService {
     private readonly orderModel: typeof Order,
     private readonly customPizzaService: CustomPizzaService,
   ) {}
-
-  /**
-   * Helper to set current user id + role context in a transaction for PostgreSQL RLS.
-   */
-  private async setRlsContext(userId: string, role: UserRole, transaction: Transaction): Promise<void> {
-    await this.sequelize.query(
-      `SELECT set_config('app.current_user_id', :userId, true), set_config('app.current_user_role', :role, true);`,
-      {
-        replacements: { userId, role },
-        transaction,
-      }
-    );
-  }
 
   /**
    * Create a new order from the user's saved custom pizzas.
@@ -90,7 +78,7 @@ export class OrderService {
     // 3. Persist order inside an RLS-enforced transaction
     const transaction = await this.sequelize.transaction();
     try {
-      await this.setRlsContext(userId, UserRole.CUSTOMER, transaction);
+      await setRlsContext(this.sequelize, userId, transaction, UserRole.CUSTOMER);
 
       const order = await this.orderModel.create(
         {
@@ -119,7 +107,7 @@ export class OrderService {
 
     const transaction = await this.sequelize.transaction();
     try {
-      await this.setRlsContext(userId, UserRole.CUSTOMER, transaction);
+      await setRlsContext(this.sequelize, userId, transaction, UserRole.CUSTOMER);
 
       const { rows, count } = await this.orderModel.findAndCountAll({
         where,
@@ -171,7 +159,7 @@ export class OrderService {
 
     const transaction = await this.sequelize.transaction();
     try {
-      await this.setRlsContext(employeeId, role, transaction);
+      await setRlsContext(this.sequelize, employeeId, transaction, role);
 
       const { rows, count } = await this.orderModel.findAndCountAll({
         where: where as WhereOptions<Order>,
@@ -210,7 +198,7 @@ export class OrderService {
 
     const transaction = await this.sequelize.transaction();
     try {
-      await this.setRlsContext(employeeId, role, transaction);
+      await setRlsContext(this.sequelize, employeeId, transaction, role);
 
       const order = await this.orderModel.findByPk(orderId, { transaction });
       if (!order) {
@@ -248,7 +236,7 @@ export class OrderService {
   async cancel(customerId: string, orderId: string): Promise<{ message: string }> {
     const transaction = await this.sequelize.transaction();
     try {
-      await this.setRlsContext(customerId, UserRole.CUSTOMER, transaction);
+      await setRlsContext(this.sequelize, customerId, transaction, UserRole.CUSTOMER);
 
       const order = await this.orderModel.findOne({
         where: { id: orderId, userId: customerId },

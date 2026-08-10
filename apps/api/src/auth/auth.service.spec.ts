@@ -5,14 +5,33 @@ import { getModelToken } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { AuthService } from './auth.service';
-import { User, Session, UserRole } from './models';
+import { User, Session } from './models';
+import { UserRole } from '../common/enums/user-role.enum';
+
+interface MockUserModel {
+  findOne: jest.Mock;
+  create: jest.Mock;
+}
+
+interface MockSessionModel {
+  create: jest.Mock;
+  destroy: jest.Mock;
+}
+
+interface MockJwtService {
+  sign: jest.Mock;
+}
+
+interface MockConfigService {
+  get: jest.Mock;
+}
 
 describe('AuthService', () => {
   let service: AuthService;
-  let mockUserModel: any;
-  let mockSessionModel: any;
-  let mockJwtService: any;
-  let mockConfigService: any;
+  let mockUserModel: MockUserModel;
+  let mockSessionModel: MockSessionModel;
+  let mockJwtService: MockJwtService;
+  let mockConfigService: MockConfigService;
 
   beforeEach(async () => {
     mockUserModel = {

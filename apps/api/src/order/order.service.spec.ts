@@ -7,7 +7,7 @@ import { OrderService } from './order.service';
 import { Order } from './models/order.model';
 import { CustomPizzaService } from '../custom-pizza/custom-pizza.service';
 import { OrderStatus } from './enums/order-status.enum';
-import { UserRole } from '../auth/models';
+import { UserRole } from '../common/enums/user-role.enum';
 
 interface MockTransaction {
   commit: jest.Mock<Promise<void>>;
