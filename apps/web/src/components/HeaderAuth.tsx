@@ -1,34 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { getProfile, logout, UserProfile } from '@/lib/api/auth';
+import { useAuth } from '@/lib/auth/auth-context';
 
 export function HeaderAuth() {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    if (token) {
-      getProfile()
-        .then((profile) => setUser(profile))
-        .catch(() => {
-          logout();
-          setUser(null);
-        })
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
-  }, []);
+  const { user, isLoading, logout } = useAuth();
 
   const handleLogout = async () => {
     await logout();
-    setUser(null);
   };
 
-  if (loading) {
+  if (isLoading) {
     return <span className="text-slate-400 text-sm font-medium animate-pulse">Checking status...</span>;
   }
 
@@ -72,4 +54,3 @@ export function HeaderAuth() {
     </div>
   );
 }
-

@@ -1,19 +1,42 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AppHeader } from '@/components/AppHeader';
 import { getCatalogItems, CatalogItem } from '@/lib/api/catalog';
-import { getProfile, UserProfile } from '@/lib/api/auth';
-import { createCustomPizza, getCustomPizzas, CustomPizza } from '@/lib/api/custom-pizza';
+import { useAuth } from '@/lib/auth/auth-context';
+import { createCustomPizza, getCustomPizzas } from '@/lib/api/custom-pizza';
 import Link from 'next/link';
 
 export default function PizzaBuilderPage() {
-  // Data states
-  const [catalog, setCatalog] = useState<CatalogItem[]>([]);
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [savedPizzas, setSavedPizzas] = useState<CustomPizza[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const queryClient = useQueryClient();
+  const { user, isLoading: authLoading } = useAuth();
+
+  // Data queries
+  const catalogQuery = useQuery({
+    queryKey: ['catalog'],
+    queryFn: getCatalogItems,
+  });
+  const catalog = catalogQuery.data ?? [];
+
+  const savedPizzasQuery = useQuery({
+    queryKey: ['custom-pizzas'],
+    queryFn: getCustomPizzas,
+    enabled: !!user,
+  });
+  const savedPizzas = savedPizzasQuery.data ?? [];
+
+  const savePizzaMutation = useMutation({
+    mutationFn: createCustomPizza,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['custom-pizzas'] });
+    },
+  });
+
   const [error, setError] = useState<string | null>(null);
+  const catalogError = catalogQuery.isError && catalogQuery.error instanceof Error
+    ? catalogQuery.error.message
+    : null;
 
   // Wizard state
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -24,36 +47,7 @@ export default function PizzaBuilderPage() {
   const [pizzaName, setPizzaName] = useState<string>('');
 
   // Submit states
-  const [submitting, setSubmitting] = useState<boolean>(false);
   const [submitSuccess, setSubmitSuccess] = useState<boolean>(false);
-
-  useEffect(() => {
-    async function loadInitialData() {
-      try {
-        const catalogData = await getCatalogItems();
-        setCatalog(catalogData);
-
-        const token = localStorage.getItem('token');
-        if (token) {
-          try {
-            const profile = await getProfile();
-            setUser(profile);
-            const pizzas = await getCustomPizzas();
-            setSavedPizzas(pizzas);
-          } catch {
-            // Token expired or invalid
-            localStorage.removeItem('token');
-          }
-        }
-      } catch (err: any) {
-        setError(err.message || 'Failed to load builder dependencies.');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadInitialData();
-  }, []);
 
   // Filter catalog items by category
   const crusts = catalog.filter((item) => item.category === 'Crust');
@@ -101,11 +95,10 @@ export default function PizzaBuilderPage() {
       return;
     }
 
-    setSubmitting(true);
     setError(null);
 
     try {
-      const result = await createCustomPizza({
+      await savePizzaMutation.mutateAsync({
         name: pizzaName,
         crustId: selectedCrust.id,
         sauceId: selectedSauce.id,
@@ -113,7 +106,6 @@ export default function PizzaBuilderPage() {
         toppings: selectedToppings.map((t) => t.id),
       });
 
-      setSavedPizzas((prev) => [result, ...prev]);
       setSubmitSuccess(true);
 
       // Reset wizard
@@ -125,8 +117,6 @@ export default function PizzaBuilderPage() {
       setCurrentStep(1);
     } catch (err: any) {
       setError(err.message || 'Failed to save your custom pizza.');
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -211,7 +201,7 @@ export default function PizzaBuilderPage() {
             </div>
           )}
 
-          {!user && !loading && (
+          {!user && !authLoading && (
             <div className="p-5 rounded-2xl bg-orange-50 border border-orange-200 text-orange-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <p className="text-xs font-bold">🍕 Persist Your Signature Recipes</p>
@@ -228,15 +218,15 @@ export default function PizzaBuilderPage() {
             </div>
           )}
 
-          {error && (
+          {(catalogError || error) && (
             <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-medium">
-              ⚠️ {error}
+              ⚠️ {catalogError || error}
             </div>
           )}
 
           {/* Builder Step Contents */}
           <div className="flex-1 p-6 md:p-8 rounded-3xl bg-white border border-slate-200/80 shadow-xs flex flex-col justify-between min-h-[400px]">
-            {loading ? (
+            {catalogQuery.isLoading ? (
               <div className="flex-1 flex flex-col items-center justify-center gap-3">
                 <div className="w-10 h-10 rounded-full border-4 border-emerald-200 border-t-emerald-600 animate-spin"></div>
                 <p className="text-xs font-medium text-slate-500">Loading builder options...</p>
@@ -474,14 +464,14 @@ export default function PizzaBuilderPage() {
                   ) : (
                     <button
                       onClick={handleSavePizza}
-                      disabled={!isStepValid() || submitting || !user}
+                      disabled={!isStepValid() || savePizzaMutation.isPending || !user}
                       className={`px-6 py-2.5 text-xs font-bold rounded-xl text-white transition cursor-pointer ${
-                        isStepValid() && !submitting && user
+                        isStepValid() && !savePizzaMutation.isPending && user
                           ? 'bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-600/10'
                           : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                       }`}
                     >
-                      {submitting ? 'Saving recipe...' : 'Save Pizza & Exit'}
+                      {savePizzaMutation.isPending ? 'Saving recipe...' : 'Save Pizza & Exit'}
                     </button>
                   )}
                 </div>
@@ -537,7 +527,7 @@ export default function PizzaBuilderPage() {
               </span>
             </div>
 
-            {loading ? (
+            {savedPizzasQuery.isLoading ? (
               <div className="flex items-center justify-center py-10">
                 <div className="w-5 h-5 border-2 border-emerald-200 border-t-emerald-600 animate-spin rounded-full"></div>
               </div>
